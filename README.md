@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🧪 Simulação de Epidemia (SIR) — Sequencial vs Paralelo
 
 Projeto acadêmico que implementa uma **simulação de epidemia** usando o modelo **SIR** (Suscetíveis, Infectados e Recuperados).  
