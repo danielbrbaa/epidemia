@@ -143,4 +143,4 @@ npm run dev
 1. Crie projeto, ative Authentication (Email/Password) e Firestore.
 2. Em `site/`: `cp .env.example .env` e cole as chaves do app Web.
 3. Abra `/cadastro` e cadastre um usuário.
->>>>>>> fc266c1 (v1.0.1.5)
+
