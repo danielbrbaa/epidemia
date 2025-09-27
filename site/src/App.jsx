@@ -1,9 +1,9 @@
+
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { motion } from 'framer-motion'
 
 const S=0, I=1, R=2;
-
 function rngFactory(seed){ let x=(seed>>>0)||123456789; return ()=>{ x^=x<<13; x^=x>>>17; x^=x<<5; return ((x>>>0)/4294967296); }; }
 
 function initWorld(N, seed = 42, pInitial = 0.01){
@@ -12,12 +12,7 @@ function initWorld(N, seed = 42, pInitial = 0.01){
   for(let i=0;i<N*N;i++) grid[i] = (rnd() < pInitial) ? I : S;
   return { grid, rnd };
 }
-
-function countStates(grid){
-  let s=0,i=0,r=0;
-  for(let k=0;k<grid.length;k++){ const v=grid[k]; if(v===S)s++; else if(v===I)i++; else r++; }
-  return {S:s, I:i, R:r};
-}
+function countStates(grid){ let s=0,i=0,r=0; for(let k=0;k<grid.length;k++){ const v=grid[k]; if(v===S)s++; else if(v===I)i++; else r++; } return {S:s, I:i, R:r}; }
 
 function stepSequential(grid, N, pInfect, pRecover, rnd){
   const out = new Uint8Array(grid.length);
@@ -73,12 +68,7 @@ const workerCode = `
     self.postMessage(out, [out.buffer]);
   }
 `;
-
-function createWorker(){
-  const blob = new Blob([workerCode], { type: 'application/javascript' });
-  const url = URL.createObjectURL(blob);
-  return new Worker(url);
-}
+function createWorker(){ const blob = new Blob([workerCode], { type: 'application/javascript' }); const url = URL.createObjectURL(blob); return new Worker(url); }
 
 function useSimulation(){
   const [N,setN] = useState(80);
@@ -100,7 +90,6 @@ function useSimulation(){
     setMetrics([{ step: 0, ...countStates(grid) }]);
     setProgress(0);
   };
-
   useEffect(()=>{ reset(); /* eslint-disable-next-line */ }, [N, seed]);
 
   const run = async () => {
@@ -108,7 +97,6 @@ function useSimulation(){
     setRunning(true);
     let g = grid;
     const rnd = rngFactory(seed);
-
     const tiles = [];
     const stepSize = Math.max(1, Math.floor(N / Math.max(1, workers)));
     for (let x0 = 0; x0 < N; x0 += stepSize) tiles.push({ x0, x1: Math.min(N, x0+stepSize) });
@@ -129,7 +117,6 @@ function useSimulation(){
       if (t % 5 === 0 || t === steps) setProgress(Math.round((t/steps)*100));
       if (t % 10 === 0) await new Promise(r=>setTimeout(r,0));
     }
-
     if (w){ w.terminate(); workerRef.current = null; }
     setGrid(g); setMetrics(newMetrics); setRunning(false);
   };
@@ -235,17 +222,6 @@ export default function App(){
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </section>
-
-        <section className="md:col-span-5 bg-white rounded-2xl shadow p-4 md:p-6 space-y-3">
-          <h2 className="text-xl font-semibold">Como funciona</h2>
-          <ul className="list-disc pl-6 text-slate-700 space-y-1">
-            <li><b>Modelo SIR</b>: Suscetível (S), Infectado (I), Recuperado (R).</li>
-            <li><b>Atualização síncrona</b> (double buffering) para corretude.</li>
-            <li><b>Vizinhança toroidal</b> (Moore, 8 vizinhos).</li>
-            <li><b>Paralelo</b>: divisão em blocos de linhas processados no Web Worker.</li>
-            <li>Com a mesma <code>seed</code>, os resultados são reproduzíveis por modo.</li>
-          </ul>
         </section>
       </main>
 

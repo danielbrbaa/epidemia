@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🧪 Simulação de Epidemia (SIR) — Sequencial vs Paralelo
 
 Projeto acadêmico que implementa uma **simulação de epidemia** usando o modelo **SIR** (Suscetíveis, Infectados e Recuperados).  
@@ -26,6 +27,16 @@ sim-epidemia/
 ## ⚙️ Rodando a Simulação em Python
 
 ### 1. Instalar dependências
+=======
+
+# 🧪 Simulação de Epidemia (SIR) — Projeto Unificado
+
+Este repositório reúne **todo o código** necessário para as Sprints 1–4:
+- **Python** (simulação sequencial e paralela): `app.py`, `core/`, `sim/`, `io/`, `outputs/`.
+- **Site (React + Vite + Tailwind + Router + Firebase)**: `site/` com rotas `/simulacao`, `/sobre`, `/entregas`, `/cadastro`.
+
+## ▶️ Python
+>>>>>>> fc266c1 (v1.0.1.5)
 ```bash
 pip install -r requirements.txt
 ````
@@ -42,6 +53,7 @@ python app.py --mode=seq --N=200 --steps=200
 python app.py --mode=par --N=200 --steps=200 --workers=8
 ```
 
+<<<<<<< HEAD
 ### 4. Saídas geradas em `/outputs`
 
 * `metrics_seq.csv` ou `metrics_par.csv` → métricas por passo
@@ -130,3 +142,16 @@ npm run preview
 Projeto acadêmico para fins de estudo.
 Sinta-se livre para reutilizar com créditos.
 
+=======
+## 🌐 Site
+```bash
+cd site
+npm install
+npm run dev
+```
+
+## 🔥 Firebase (p/ cadastro)
+1. Crie projeto, ative Authentication (Email/Password) e Firestore.
+2. Em `site/`: `cp .env.example .env` e cole as chaves do app Web.
+3. Abra `/cadastro` e cadastre um usuário.
+>>>>>>> fc266c1 (v1.0.1.5)
