@@ -208,8 +208,3 @@ Acesse:
 ```
 http://localhost:5173
 ```
-
----
-
-Posso gerar um exemplo de `<img>` Markdown com preview automático do canvas.
-```
