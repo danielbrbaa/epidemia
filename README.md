@@ -1,8 +1,9 @@
+
+
 # 🧪 Simulação de Epidemia (SIR) — Sequencial vs Paralelo
 
 Projeto acadêmico que implementa uma **simulação de epidemia** usando o modelo **SIR** (Suscetíveis, Infectados e Recuperados).  
-A simulação é feita em uma **grade 2D toroidal** com **atualização síncrona (double buffering)**.  
-O objetivo é comparar a execução **sequencial (thread única)** e **paralela (threads / Web Worker)**.
+A simulação é feita em uma **grade 2D toroidal**, com execução **sequencial** e **paralela**, e um **site interativo** com autenticação via **Firebase** e **API FastAPI**.
 
 ---
 
@@ -10,137 +11,200 @@ O objetivo é comparar a execução **sequencial (thread única)** e **paralela 
 
 ```
 
-sim-epidemia/
-├─ app.py                  # Script principal para rodar simulação em Python
+epidemia-main/
+├─ app.py                  # Backend FastAPI com autenticação Firebase + endpoint /simular
 ├─ requirements.txt        # Dependências Python
-├─ core/                   # Núcleo da simulação (estados, mundo, vizinhança)
-├─ sim/                    # Implementações sequencial e paralela
-├─ io/                     # Entrada/saída: configs, salvamento de métricas/gráficos
-├─ outputs/                # Resultados gerados (CSV, PNG, JSON)
-└─ site/                   # Website interativo (React + Vite + Tailwind)
+├─ core/                   # Núcleo da simulação (agentes, mundo)
+│   ├─ agent.py
+│   ├─ world.py
+│   └─ **init**.py
+├─ sim/                    # Implementações da simulação
+│   ├─ sequential.py       # Versão sequencial
+│   ├─ parallel.py         # (opcional) Versão paralela
+│   └─ rules.py            # Regras de infecção/recuperação
+├─ data_io/                # Entrada e saída de dados
+│   ├─ config.py
+│   ├─ results.py
+│   └─ **init**.py
+├─ results/                # Arquivos JSON de simulações geradas
+├─ tests/                  # Testes unitários (pytest)
+│   ├─ test_rules.py
+│   └─ test_sequential.py
+└─ site/                   # Website interativo (React + Vite + Tailwind + Firebase)
+├─ src/
+│   ├─ pages/
+│   │   ├─ Simulacao.jsx
+│   │   ├─ Login.jsx
+│   │   ├─ Cadastro.jsx
+│   │   ├─ Sobre.jsx
+│   │   └─ Entregas.jsx
+│   ├─ components/
+│   │   ├─ Nav.jsx
+│   │   └─ ProtectedRoute.jsx
+│   ├─ services/
+│   │   ├─ firebase.js
+│   │   └─ authState.js
+│   ├─ App.jsx
+│   └─ main.jsx
+├─ public/
+└─ package.json
 
 ````
 
 ---
 
-## ⚙️ Rodando a Simulação em Python
+## ⚙️ Backend — FastAPI
 
-### 1. Instalar dependências
+A API realiza a execução da simulação e exige autenticação via **Firebase Token**.
 
-# 🧪 Simulação de Epidemia (SIR) — Projeto Unificado
-
-Este repositório reúne **todo o código** necessário para as Sprints 1–4:
-- **Python** (simulação sequencial e paralela): `app.py`, `core/`, `sim/`, `io/`, `outputs/`.
-- **Site (React + Vite + Tailwind + Router + Firebase)**: `site/` com rotas `/simulacao`, `/sobre`, `/entregas`, `/cadastro`.
-
-## ▶️ Python
+### ▶️ Rodando localmente
 
 ```bash
 pip install -r requirements.txt
+uvicorn app:app --reload
 ````
 
-### 2. Rodar simulação sequencial
+Acesse:
 
-```bash
-python app.py --mode=seq --N=200 --steps=200
+```
+http://127.0.0.1:8000/docs
 ```
 
-### 3. Rodar simulação paralela
+### 🔐 Endpoints principais
 
-```bash
-python app.py --mode=par --N=200 --steps=200 --workers=8
-```
+| Método | Endpoint   | Descrição                         |
+| ------ | ---------- | --------------------------------- |
+| `GET`  | `/status`  | Verifica se a API está online     |
+| `POST` | `/simular` | Executa simulação SIR autenticada |
 
-### 4. Saídas geradas em `/outputs`
-
-* `metrics_seq.csv` ou `metrics_par.csv` → métricas por passo
-* `sir_seq.png` ou `sir_par.png` → gráfico SIR
-* `timing_seq.json` ou `timing_par.json` → tempo de execução
+> **Header obrigatório**
+> `Authorization: Bearer <token_firebase>`
 
 ---
 
-## 🌐 Rodando o Site (Visualização Interativa)
+## 🌐 Site — React + Vite + Firebase
 
-### 1. Entrar na pasta do site
+O site permite login, cadastro e execução das simulações com visualização interativa.
+
+### ▶️ Rodando o site
 
 ```bash
 cd site
-```
-
-### 2. Instalar dependências
-
-```bash
 npm install
-```
-
-### 3. Rodar em modo desenvolvimento
-
-```bash
 npm run dev
 ```
 
-Abra o link mostrado no terminal (ex.: `http://localhost:5173`).
+Acesse:
 
-### 4. Build para produção
+```
+http://localhost:5173
+```
+
+### 🔥 Firebase (Autenticação)
+
+1. Crie um projeto no [Firebase Console](https://console.firebase.google.com/).
+2. Ative **Authentication → Email/Senha**.
+3. Gere as credenciais web e adicione ao arquivo `.env` dentro da pasta `site/`:
 
 ```bash
-npm run build
-npm run preview
+VITE_FB_API_KEY=xxxxx
+VITE_FB_AUTH_DOMAIN=xxxxx.firebaseapp.com
+VITE_FB_PROJECT_ID=xxxxx
+VITE_FB_STORAGE=xxxxx.appspot.com
+VITE_FB_SENDER=xxxxx
+VITE_FB_APP_ID=xxxxx
+VITE_FB_MEASUREMENT_ID=xxxxx
 ```
+
+4. Baixe a chave da conta de serviço (SDK Admin) e coloque como:
+
+```
+serviceAccountKey.json
+```
+
+na raiz do projeto.
 
 ---
 
 ## 🎮 Funcionalidades
 
+* Login e cadastro via **Firebase**
+* Execução autenticada da simulação no **FastAPI**
 * Controle de parâmetros:
 
   * `N` (tamanho da grade NxN)
-  * `steps` (número de passos de tempo)
+  * `passos` (número de iterações)
   * `p_infect` (probabilidade de infecção)
   * `p_recover` (probabilidade de recuperação)
-  * `seed` (aleatoriedade reprodutível)
-  * `workers` (apenas no modo paralelo)
-* Comparação de **Sequencial** vs **Paralelo (Worker)**
-* Visualização da grade em tempo real
-* Gráfico das curvas **S/I/R** ao longo do tempo
+* Visualização da simulação (canvas 2D)
+* Gráfico das curvas **S/I/R**
+* Salvamento dos resultados em `.json`
 
 ---
 
 ## 📊 Modelo SIR
 
-* **S**: suscetíveis
-* **I**: infectados
-* **R**: recuperados (imunes)
-* Vizinhança: Moore (8 vizinhos) com bordas **toroidais**
-* Atualização **síncrona** (todos os agentes em t → t+1 ao mesmo tempo)
+* **S (Susceptíveis):** podem ser infectados
+* **I (Infectados):** transmitem com probabilidade `p_infect`
+* **R (Recuperados):** tornam-se imunes
+* Atualização síncrona (`t → t+1`)
+* Vizinhança: **Moore (8 vizinhos)**
+* Mundo **toroidal** (as bordas se conectam)
 
 ---
 
-## 👨‍💻 Tecnologias Utilizadas
+## 🧠 Tecnologias Utilizadas
 
-* **Python**: NumPy, Matplotlib
-* **JavaScript/React**: Vite, TailwindCSS, Recharts, Framer Motion
-* **Paralelismo**:
+### 🔹 Backend
 
-  * Python → `ThreadPoolExecutor`
-  * Web → **Web Worker**
+* **Python 3.11+**
+* FastAPI
+* Firebase Admin SDK
+* Uvicorn
+* Pytest (testes)
+
+### 🔹 Frontend
+
+* **React + Vite**
+* TailwindCSS
+* Firebase Auth
+* Axios
+* Recharts (gráficos)
+* Framer Motion (animações)
+* Context API + React Router
 
 ---
 
-## 📝 Licença
+## 🧾 Licença
 
-Projeto acadêmico para fins de estudo.
-Sinta-se livre para reutilizar com créditos.
+Projeto acadêmico desenvolvido para fins educacionais.
+Sinta-se livre para utilizar e modificar com os devidos créditos.
 
-## 🌐 Site
+---
+
+## 👨‍💻 Autor
+
+🔗 [github.com/danielbrbaa](https://github.com/danielbrbaa)
+
+---
+
+## 🚀 Execução Completa (Resumo)
+
+### Backend
+
+```bash
+uvicorn app:app --reload
+```
+
+### Frontend
+
 ```bash
 cd site
-npm install
 npm run dev
 ```
 
-## 🔥 Firebase (p/ cadastro)
-1. Crie projeto, ative Authentication (Email/Password) e Firestore.
-2. Em `site/`: `cp .env.example .env` e cole as chaves do app Web.
-3. Abra `/cadastro` e cadastre um usuário.
+Acesse:
 
+```
+http://localhost:5173
+```
