@@ -1,4 +1,77 @@
+<<<<<<< HEAD
 outputs/
 node_modules/
 dist/
 .env
+=======
+# =====================================
+# 🔐 PROTEÇÃO DE CREDENCIAIS
+# =====================================
+serviceAccountKey.json
+.env
+.env.local
+*.pem
+*.key
+*.crt
+
+# =====================================
+# 🧠 PYTHON / FASTAPI
+# =====================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.log
+*.pid
+*.seed
+*.json.backup
+.venv/
+venv/
+env/
+ENV/
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.spec
+
+# =====================================
+# 🧩 TESTES / PYTEST
+# =====================================
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.hypothesis/
+.tox/
+
+# =====================================
+# 🌐 FRONT-END (React + Vite)
+# =====================================
+site/node_modules/
+site/dist/
+site/.vite/
+site/.DS_Store
+*.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================================
+# 💻 EDITORES / SISTEMA
+# =====================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+>>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)

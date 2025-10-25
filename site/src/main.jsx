@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import './index.css'
@@ -38,3 +39,18 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')).render(<RouterProvider router={router} />)
+=======
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+import { AuthProvider } from "./services/authState.jsx";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </React.StrictMode>
+);
+>>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)

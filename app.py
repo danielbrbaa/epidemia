@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import argparse, time
 from io.config import Config
@@ -32,3 +33,89 @@ def main():
 
 if __name__ == "__main__":
     main()
+=======
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+import firebase_admin
+from firebase_admin import credentials, auth
+from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from sim.sequential import run_simulation
+from data_io import results
+
+# ============================
+# 🔹 CONFIGURAÇÃO DO FASTAPI
+# ============================
+app = FastAPI(
+    title="API - Simulação de Epidemia SIR",
+    description="API com autenticação via Firebase e execução da simulação.",
+    version="2.0.0"
+)
+
+# ============================
+# 🔹 PERMISSÕES CORS
+# ============================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ============================
+# 🔹 FIREBASE ADMIN
+# ============================
+# Garante inicialização única (evita erro no reload)
+if not firebase_admin._apps:
+    cred = credentials.Certificate("serviceAccountKey.json")
+    firebase_admin.initialize_app(cred)
+
+
+# ============================
+# 🔹 VERIFICA TOKEN
+# ============================
+async def verificar_token(request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        raise HTTPException(status_code=401, detail="Token ausente")
+
+    try:
+        token = auth_header.split("Bearer ")[1]
+        decoded = auth.verify_id_token(token)
+        request.state.user = decoded
+        return decoded
+    except Exception as e:
+        print(f"Erro de autenticação Firebase: {e}")
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+
+
+# ============================
+# 🔹 ENDPOINTS
+# ============================
+@app.get("/status")
+def status():
+    return {"status": "API com autenticação ativa"}
+
+
+@app.post("/simular")
+async def simular(parametros: dict, usuario=Depends(verificar_token)):
+    try:
+        resultado = run_simulation(
+            N=parametros.get("N", 100),
+            p_infect=parametros.get("p_infect", 0.15),
+            p_recover=parametros.get("p_recover", 0.02),
+            passos=parametros.get("passos", 200),
+        )
+
+        results.salvar_json(resultado)
+
+        return {
+            "usuario": usuario.get("email", "desconhecido"),
+            "resultado": resultado,
+            "mensagem": "Simulação concluída com sucesso!"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+>>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)

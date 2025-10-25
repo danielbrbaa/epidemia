@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth, logout } from '../services/authState'
@@ -32,4 +33,45 @@ export default function Nav(){
       </div>
     </nav>
   )
+=======
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../services/authState";
+
+export default function Nav() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
+
+  const linkCls = ({ isActive }) =>
+    `px-3 py-2 rounded-md font-medium ${isActive ? "bg-slate-200" : "hover:bg-slate-100"}`;
+
+  return (
+    <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-sm">
+      <div className="flex gap-3">
+        <NavLink to="/simulacao" className={linkCls}>Simulação</NavLink>
+        <NavLink to="/sobre" className={linkCls}>Sobre</NavLink>
+        <NavLink to="/entregas" className={linkCls}>Entregas</NavLink>
+      </div>
+      <div>
+        {user ? (
+          <>
+            <span className="mr-3 text-slate-600">{user.email}</span>
+            <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded">
+              Sair
+            </button>
+          </>
+        ) : (
+          <>
+            <NavLink to="/login" className={linkCls}>Login</NavLink>
+            <NavLink to="/cadastro" className={linkCls}>Cadastro</NavLink>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+>>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)
 }

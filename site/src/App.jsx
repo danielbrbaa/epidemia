@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts'
@@ -231,3 +232,48 @@ export default function App(){
     </div>
   );
 }
+=======
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Nav from "./components/Nav.jsx";
+import Sobre from "./pages/Sobre.jsx";
+import Cadastro from "./pages/Cadastro.jsx";
+import Login from "./pages/Login.jsx";
+import Entregas from "./pages/Entregas.jsx";
+import Simulacao from "./pages/Simulacao.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
+function App() {
+  return (
+    <BrowserRouter>
+      {/* ✅ Navbar sempre visível */}
+      <Nav />
+
+      <div className="p-4">
+        <Routes>
+          <Route path="/" element={<Sobre />} />
+          <Route path="/sobre" element={<Sobre />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/entregas" element={<Entregas />} />
+
+          {/* 🔒 Simulação protegida */}
+          <Route
+            path="/simulacao"
+            element={
+              <ProtectedRoute>
+                <Simulacao />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 404 - rota padrão */}
+          <Route path="*" element={<h1>Página não encontrada</h1>} />
+        </Routes>
+      </div>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+>>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)
