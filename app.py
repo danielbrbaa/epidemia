@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 import argparse, time
 from io.config import Config
@@ -33,7 +33,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-=======
+
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -118,4 +118,4 @@ async def simular(parametros: dict, usuario=Depends(verificar_token)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
->>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)
+
