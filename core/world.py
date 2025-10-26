@@ -1,5 +1,5 @@
 
-<<<<<<< HEAD
+
 import numpy as np
 
 S, I, R = 0, 1, 2
@@ -18,23 +18,4 @@ def neighbors_toroidal(x, y, N):
         for yi in ys:
             if not (xi==x and yi==y):
                 yield xi, yi
-=======
-from core.agent import Agent
 
-class World:
-    def __init__(self, N, p_infect, p_recover):
-        self.N = N
-        self.agents = [Agent() for _ in range(N*N)]
-        self.p_infect = p_infect
-        self.p_recover = p_recover
-
-    def update(self):
-        for agent in self.agents:
-            agent.update(self.p_infect, self.p_recover)
-
-    def count_states(self):
-        counts = {"S": 0, "I": 0, "R": 0}
-        for agent in self.agents:
-            counts[agent.estado] += 1
-        return counts
->>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)

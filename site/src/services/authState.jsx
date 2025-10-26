@@ -1,36 +1,26 @@
+// site/src/services/authState.jsx
 import { createContext, useContext, useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { app } from "./firebase.js"; // 🔹 importa firebase corretamente
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "./firebase";
 
-const AuthContext = createContext();
+const AuthContext = createContext(undefined);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const auth = getAuth(app);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
       setLoading(false);
     });
     return unsubscribe;
-  }, [auth]);
+  }, []);
 
   const logout = async () => {
     await signOut(auth);
   };
 
-  // Mostra tela de carregamento temporária enquanto verifica login
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen text-gray-500 text-lg">
-        Carregando...
-      </div>
-    );
-  }
-
-  // Return principal (onde o contexto é fornecido à aplicação)
   return (
     <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
@@ -39,5 +29,9 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    console.error("❌ useAuth() foi chamado fora de um <AuthProvider>!");
+  }
+  return context;
 }

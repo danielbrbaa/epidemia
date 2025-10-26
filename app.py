@@ -1,10 +1,11 @@
-
-
 import argparse, time
-from io.config import Config
-from sim.sequential import run_sim as run_seq
+from data_io.config import Config
+from sim.sequential import run_simulation as run_seq
 from sim.parallel import run_sim as run_par
-from io.results import save_metrics, plot_sir, save_timing
+from data_io.results import save_metrics, plot_sir, save_timing
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 def main():
     p = argparse.ArgumentParser()
@@ -99,23 +100,32 @@ def status():
     return {"status": "API com autenticação ativa"}
 
 
+from types import SimpleNamespace
+from fastapi import FastAPI, HTTPException, Depends
+
 @app.post("/simular")
-async def simular(parametros: dict, usuario=Depends(verificar_token)):
+def simular(parametros: dict, usuario=Depends(verificar_token)):
     try:
-        resultado = run_simulation(
+        cfg = SimpleNamespace(
             N=parametros.get("N", 100),
+            steps=parametros.get("passos", 200),
             p_infect=parametros.get("p_infect", 0.15),
             p_recover=parametros.get("p_recover", 0.02),
-            passos=parametros.get("passos", 200),
+            seed=parametros.get("seed", 42)
         )
 
-        results.salvar_json(resultado)
-
+        # Executa a simulação
+        resultado = run_simulation(cfg)
+        # Retorna o formato certo
         return {
-            "usuario": usuario.get("email", "desconhecido"),
-            "resultado": resultado,
-            "mensagem": "Simulação concluída com sucesso!"
+    "usuario": usuario.get("email"),
+    "resultado": resultado,
+    "mensagem": "Simulação concluída com sucesso!"
         }
+
     except Exception as e:
+        import traceback
+        print("❌ ERRO NA SIMULAÇÃO:")
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 

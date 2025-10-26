@@ -2,10 +2,9 @@
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 from core.world import S, I, R, init_world, neighbors_toroidal
-<<<<<<< HEAD
-=======
+
 from data_io import config, results
->>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)
+
 
 def step_tile(args):
     grid_t, x0, x1, p_infect, p_recover, seed = args

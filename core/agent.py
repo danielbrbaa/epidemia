@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# Estados S=0, I=1, R=2 — regras nos módulos de simulação.
-=======
+
 import random
 
 class Agent:
@@ -23,4 +21,4 @@ class Agent:
         elif self.estado == 'S':
             if random.random() < p_infect:
                 self.estado = 'I'
->>>>>>> 2cadf08 (Sprint 5, 6 e 7 - v.1.0.1.9)
+
